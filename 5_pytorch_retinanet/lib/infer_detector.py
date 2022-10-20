@@ -135,18 +135,18 @@ class Infer():
                     pred_label = int(labels[box_id])
                     xmin, ymin, xmax, ymax = boxes[box_id, :]
                     color = random.choice(self.system_dict["local"]["colors"])
-                    cv2.rectangle(output_image, (xmin, ymin), (xmax, ymax), color, 2)
+                    cv2.rectangle(output_image, (int(xmin), int(ymin)), (int(xmax), int(ymax)), color, 2)
                     text_size = cv2.getTextSize(class_list[pred_label] + ' : %.2f' % pred_prob, cv2.FONT_HERSHEY_PLAIN, 1, 1)[0]
 
-                    cv2.rectangle(output_image, (xmin, ymin), (xmin + text_size[0] + 3, ymin + text_size[1] + 4), color, -1)
+                    cv2.rectangle(output_image, (int(xmin), int(ymin)), (int(xmin + text_size[0] + 3),int(ymin + text_size[1] + 4)), color, -1)
                     cv2.putText(
                         output_image, class_list[pred_label] + ' : %.2f' % pred_prob,
-                        (xmin, ymin + text_size[1] + 4), cv2.FONT_HERSHEY_PLAIN, 1,
+                        (int(xmin), int(ymin + text_size[1] + 4)), cv2.FONT_HERSHEY_PLAIN, 1,
                         (255, 255, 255), 1)
 
             cv2.imwrite(os.path.join(output_folder, image_filename), output_image)
             cv2.imwrite("output.jpg", output_image)
-            return scores, labels, boxes
+            return scores, labels, boxes, class_list[pred_label]
         except:
             print('No Boxes detected')
             return None
@@ -154,7 +154,6 @@ class Infer():
     def predict_batch_of_images(self, img_folder, class_list, vis_threshold = 0.4, output_folder='Inference'):
         '''
         User function: Run inference on multiple images and visualize them
-
         Args:
             img_folder (str): Relative path to folder containing all the image files
             class_list (list): List of classes in the training set
